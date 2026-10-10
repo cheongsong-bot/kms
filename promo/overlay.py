@@ -98,7 +98,6 @@ captions = [
     (8.8, 12.3, "LIVE", "감동의 라이브 무대"),
     (12.8, 17.3, "TOGETHER", "모두가 함께하는 무대"),
     (17.8, 20.8, "HEALING", "시민과 함께하는 힐링 타임"),
-    (21.2, 23.0, "THANK YOU", "함께해주신 후원사 여러분 감사합니다"),
 ]
 cap_assets = []
 for s, e, k, ttl in captions:
