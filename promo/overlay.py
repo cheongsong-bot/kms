@@ -94,10 +94,11 @@ bug = text_img("제3회 힐링콘서트", TITLE, 38, (255, 255, 255))
 
 # (start, end, kicker, title)
 captions = [
-    (3.3, 8.3, "DANCE", "청소년 댄스 공연"),
-    (8.8, 12.3, "LIVE", "감동의 라이브 무대"),
-    (12.8, 17.3, "TOGETHER", "모두가 함께하는 무대"),
-    (17.8, 20.8, "HEALING", "시민과 함께하는 힐링 타임"),
+    (3.9, 8.4, "DANCE", "청소년 댄스 공연"),
+    (8.7, 10.7, "LIVE", "감동의 라이브 무대"),
+    (11.0, 13.5, "TOGETHER", "모두가 함께하는 무대"),
+    (13.8, 16.4, "HIGHLIGHT", "열정 가득한 현장"),
+    (16.7, 19.4, "HEALING", "시민과 함께하는 힐링 타임"),
 ]
 cap_assets = []
 for s, e, k, ttl in captions:
@@ -153,7 +154,7 @@ def draw_rings(canvas, t, t0, alpha):
 
 
 def intro(canvas, t):
-    out = 1 - prog(t, 2.6, 0.4)
+    out = 1 - prog(t, 3.3, 0.4)
     canvas.alpha_composite(with_alpha(TINT, out))
     draw_rings(canvas, t, 0, out)
     draw_particles(canvas, t, out)
@@ -200,7 +201,7 @@ def caption(canvas, t):
 
 
 def bug_draw(canvas, t):
-    a = clamp(prog(t, 3.2, 0.5)) * (1 - prog(t, 22.8, 0.4))
+    a = clamp(prog(t, 3.8, 0.5)) * (1 - prog(t, 22.4, 0.4))
     if a <= 0:
         return
     pill = Image.new("RGBA", (bug.width - 20, 70), (0, 0, 0, 0))
@@ -210,7 +211,7 @@ def bug_draw(canvas, t):
 
 
 def outro(canvas, t):
-    T0 = 23.1
+    T0 = 22.7
     pin = ease_out(prog(t, T0, 0.6))
     canvas.alpha_composite(with_alpha(TINT, pin))
     dark = Image.new("RGBA", (W, H), BURG_D + (int(90 * pin),))
@@ -240,14 +241,29 @@ def outro(canvas, t):
         canvas.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(255 * fb))))
 
 
+CUTS = [3.85, 8.65, 10.95, 13.75, 16.65, 19.65]
+
+
+def punch(frame, t):
+    # quick zoom punch right after each cut for energy
+    for c in CUTS:
+        k = (t - c) / 0.35
+        if 0 <= k < 1:
+            sc = 1 + 0.08 * (1 - ease_out(k))
+            w, h = int(W / sc), int(H / sc)
+            x, y = (W - w) // 2, (H - h) // 2
+            return frame.crop((x, y, x + w, y + h)).resize((W, H), Image.BILINEAR)
+    return frame
+
+
 def render(t, frame):
-    canvas = frame.convert("RGBA")
-    if t < 3.1:
+    canvas = punch(frame, t).convert("RGBA")
+    if t < 3.8:
         intro(canvas, t)
     else:
         bug_draw(canvas, t)
         caption(canvas, t)
-    if t >= 23.1:
+    if t >= 22.7:
         outro(canvas, t)
     return canvas.convert("RGB")
 
